@@ -24,6 +24,17 @@ func main() {
 		if err != nil {
 			fmt.Println("Error adding task:", err)
 		}
+	case "update":
+		if len(os.Args) < 4 {
+			fmt.Println("Usage: task-cli update <id_task> <description>")
+			return
+		}
+		taskID := os.Args[2]
+		taskDescription := os.Args[3]
+		err := UpdateTask(taskID, taskDescription)
+		if err != nil {
+			fmt.Println("Error updating task:", err)
+		}
 
 	default:
 		fmt.Println("Unknown command:", command)

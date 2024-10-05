@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -44,5 +46,49 @@ func AddTask(description string) error {
 	}
 
 	fmt.Printf("Task added successfully (ID: %d)\n", newTask.ID)
+	return nil
+}
+
+// Fungsi untuk mengupdate task berdasarkan ID dan deskripsi baru
+func UpdateTask(id string, newDescription string) error {
+	// Validasi ID task yang diberikan
+	taskID, err := strconv.Atoi(id)
+	if err != nil {
+		return errors.New("invalid task ID")
+	}
+
+	// Validasi deskripsi task
+	if err := ValidateDescription(newDescription); err != nil {
+		return err
+	}
+
+	// Muat task dari file JSON
+	tasks, err := LoadTasks()
+	if err != nil {
+		return err
+	}
+
+	// Cari task dengan ID yang cocok
+	taskFound := false
+	for i, task := range tasks {
+		if task.ID == taskID {
+			// Task ditemukan, lakukan update deskripsi dan updatedAt
+			tasks[i].Description = newDescription
+			tasks[i].UpdatedAt = time.Now()
+			taskFound = true
+			break
+		}
+	}
+
+	if !taskFound {
+		return errors.New("task ID not found")
+	}
+
+	// Simpan task yang sudah diupdate ke file JSON
+	if err := SaveTasks(tasks); err != nil {
+		return err
+	}
+
+	fmt.Printf("Task (ID: %d) updated successfully\n", taskID)
 	return nil
 }
