@@ -168,3 +168,25 @@ func MarkTask(id string, newStatus string) error {
 	fmt.Printf("Task (ID: %d) marked as %s successfully\n", taskID, newStatus)
 	return nil
 }
+
+// Fungsi untuk menampilkan seluruh task
+func ListTasks() error {
+	// Muat semua task dari file JSON
+	tasks, err := LoadTasks()
+	if err != nil {
+		return err
+	}
+
+	// Cek jika tidak ada task
+	if len(tasks) == 0 {
+		fmt.Println("No tasks found.")
+		return nil
+	}
+
+	// Looping dan print setiap task
+	for _, task := range tasks {
+		fmt.Printf("ID: %d, Description: %s, Status: %s, CreatedAt: %s, UpdatedAt: %s\n",
+			task.ID, task.Description, task.Status, task.CreatedAt.Format("2006-01-02 15:04:05"), task.UpdatedAt.Format("2006-01-02 15:04:05"))
+	}
+	return nil
+}

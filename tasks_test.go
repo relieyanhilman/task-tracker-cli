@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -311,6 +312,51 @@ func TestMarkTaskDone(t *testing.T) {
 	err = MarkTask("", "done")
 	if err == nil || err.Error() != "invalid task ID" {
 		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	// Cleanup: Hapus file tasks.json setelah test
+	os.Remove("tasks.json")
+}
+
+func TestListTasks(t *testing.T) {
+	// Setup: Buat file tasks.json dengan beberapa task dummy untuk testing
+	os.Remove("tasks.json")
+	task1 := Task{
+		ID:          1,
+		Description: "Task 1",
+		Status:      "todo",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	task2 := Task{
+		ID:          2,
+		Description: "Task 2",
+		Status:      "in-progress",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	SaveTasks([]Task{task1, task2})
+
+	// Capture output untuk testing
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	// Jalankan fungsi ListTasks
+	err := ListTasks()
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	w.Close()
+	var buf [1024]byte
+	n, _ := r.Read(buf[:])
+	os.Stdout = old
+	output := string(buf[:n])
+
+	// Periksa apakah output sesuai dengan task yang di-load
+	if !strings.Contains(output, "Task 1") || !strings.Contains(output, "Task 2") {
+		t.Errorf("Expected task output, but got: %s", output)
 	}
 
 	// Cleanup: Hapus file tasks.json setelah test

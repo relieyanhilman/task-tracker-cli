@@ -93,6 +93,16 @@ func main() {
 			fmt.Println("Error marking task as done:", err)
 		}
 
+	case "list":
+		if len(os.Args) != 2 {
+			fmt.Println("Usage: task-cli list")
+			return
+		}
+		err := ListTasks()
+		if err != nil {
+			fmt.Println("Error listing tasks:", err)
+		}
+
 	default:
 		fmt.Println("Unknown command:", command)
 	}
