@@ -169,24 +169,37 @@ func MarkTask(id string, newStatus string) error {
 	return nil
 }
 
-// Fungsi untuk menampilkan seluruh task
-func ListTasks() error {
+// Fungsi untuk menampilkan task berdasarkan argumen status yang diberikan.
+func ListTasks(status string) error {
 	// Muat semua task dari file JSON
 	tasks, err := LoadTasks()
 	if err != nil {
 		return err
 	}
 
+	var processedTask []Task
+	// Looping dan print setiap task
+	if status == "all" {
+		for _, task := range tasks {
+			processedTask = append(processedTask, task)
+			fmt.Printf("ID: %d, Description: %s, Status: %s, CreatedAt: %s, UpdatedAt: %s\n",
+				task.ID, task.Description, task.Status, task.CreatedAt.Format("2006-01-02 15:04:05"), task.UpdatedAt.Format("2006-01-02 15:04:05"))
+		}
+	} else {
+		for _, task := range tasks {
+			if task.Status == status {
+				processedTask = append(processedTask, task)
+				fmt.Printf("ID: %d, Description: %s, Status: %s, CreatedAt: %s, UpdatedAt: %s\n",
+					task.ID, task.Description, task.Status, task.CreatedAt.Format("2006-01-02 15:04:05"), task.UpdatedAt.Format("2006-01-02 15:04:05"))
+			}
+		}
+	}
+
 	// Cek jika tidak ada task
-	if len(tasks) == 0 {
+	if len(processedTask) == 0 {
 		fmt.Println("No tasks found.")
 		return nil
 	}
 
-	// Looping dan print setiap task
-	for _, task := range tasks {
-		fmt.Printf("ID: %d, Description: %s, Status: %s, CreatedAt: %s, UpdatedAt: %s\n",
-			task.ID, task.Description, task.Status, task.CreatedAt.Format("2006-01-02 15:04:05"), task.UpdatedAt.Format("2006-01-02 15:04:05"))
-	}
 	return nil
 }

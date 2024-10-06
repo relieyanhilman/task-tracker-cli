@@ -25,6 +25,14 @@ import (
 //
 //     Usage: task-cli mark-in-progress <task_id>
 //
+//   - mark-done: Marks the task with the given ID as done.
+//
+//     Usage: task-cli mark-done <task_id>
+//
+//   - list: Lists all tasks with the given status.
+//
+//     Usage: task-cli list || task-cli list todo || task-cli list in-progress || task-cli list done
+//
 // The program prints an error message and returns if any of the commands is
 // called with the wrong number of arguments.
 //
@@ -39,6 +47,7 @@ func main() {
 
 	switch command {
 	case "add":
+		// Add a new task with the given description.
 		if len(os.Args) < 3 {
 			fmt.Println("Usage: task-cli add <task-name>")
 			return
@@ -48,7 +57,9 @@ func main() {
 		if err != nil {
 			fmt.Println("Error adding task:", err)
 		}
+
 	case "update":
+		// Update the task with the given ID and description.
 		if len(os.Args) < 4 {
 			fmt.Println("Usage: task-cli update <id_task> <description>")
 			return
@@ -61,6 +72,7 @@ func main() {
 		}
 
 	case "delete":
+		// Delete the task with the given ID.
 		if len(os.Args) != 3 {
 			fmt.Println("Usage: task-cli delete <id_task>")
 			return
@@ -72,6 +84,7 @@ func main() {
 		}
 
 	case "mark-in-progress":
+		// Mark the task with the given ID as in-progress.
 		if len(os.Args) != 3 {
 			fmt.Println("Usage: task-cli mark-in-progress <task_id>")
 			return
@@ -83,6 +96,7 @@ func main() {
 		}
 
 	case "mark-done":
+		// Mark the task with the given ID as done.
 		if len(os.Args) != 3 {
 			fmt.Println("Usage: task-cli mark-done <task_id>")
 			return
@@ -94,13 +108,36 @@ func main() {
 		}
 
 	case "list":
-		if len(os.Args) != 2 {
-			fmt.Println("Usage: task-cli list")
+		// List all tasks with the given status.
+		if len(os.Args) < 2 || len(os.Args) > 3 {
+			fmt.Println("Usage: task-cli list || task-cli list todo || task-cli list in-progress || task-cli list done")
 			return
 		}
-		err := ListTasks()
-		if err != nil {
-			fmt.Println("Error listing tasks:", err)
+
+		if len(os.Args) == 2 {
+			err := ListTasks("all")
+			if err != nil {
+				fmt.Println("Error listing all tasks:", err)
+			}
+		} else {
+			if os.Args[2] == "todo" {
+				err := ListTasks("todo")
+				if err != nil {
+					fmt.Println("Error listing todo tasks:", err)
+				}
+			} else if os.Args[2] == "in-progress" {
+				err := ListTasks("in-progress")
+				if err != nil {
+					fmt.Println("Error listing in-progress tasks:", err)
+				}
+			} else if os.Args[2] == "done" {
+				err := ListTasks("done")
+				if err != nil {
+					fmt.Println("Error listing done tasks:", err)
+				}
+			} else {
+				fmt.Println("Usage: task-cli list || task-cli list todo || task-cli list in-progress || task-cli list done")
+			}
 		}
 
 	default:
