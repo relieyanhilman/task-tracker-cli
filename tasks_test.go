@@ -121,3 +121,68 @@ func TestUpdateTask(t *testing.T) {
 	// Cleanup: Hapus file tasks.json setelah test
 	os.Remove("tasks.json")
 }
+
+func TestDeleteTask(t *testing.T) {
+	// Setup: Buat file tasks.json dengan beberapa task dummy untuk testing
+	os.Remove("tasks.json")
+	task1 := Task{
+		ID:          1,
+		Description: "Task 1",
+		Status:      "todo",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	task2 := Task{
+		ID:          2,
+		Description: "Task 2",
+		Status:      "todo",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	SaveTasks([]Task{task1, task2})
+
+	// Case 1: Menghapus task dengan ID valid
+	err := DeleteTask("1")
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	tasks, err := LoadTasks()
+	if err != nil {
+		t.Fatalf("Failed to load tasks: %v", err)
+	}
+
+	if len(tasks) != 1 {
+		t.Fatalf("Expected 1 task left, got %d", len(tasks))
+	}
+
+	if tasks[0].ID != 2 {
+		t.Errorf("Expected task ID 2, got %d", tasks[0].ID)
+	}
+
+	// Case 2: Menghapus task dengan ID yang tidak ada
+	err = DeleteTask("99")
+	if err == nil || err.Error() != "task ID not found" {
+		t.Fatalf("Expected 'task ID not found' error, got %v", err)
+	}
+
+	// Case 3: Menghapus task dengan ID tidak valid (0 atau negatif)
+	err = DeleteTask("0")
+	if err == nil || err.Error() != "invalid task ID" {
+		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	err = DeleteTask("-1")
+	if err == nil || err.Error() != "invalid task ID" {
+		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	// Case 4: Tidak memberikan ID
+	err = DeleteTask("")
+	if err == nil || err.Error() != "invalid task ID" {
+		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	// Cleanup: Hapus file tasks.json setelah test
+	os.Remove("tasks.json")
+}

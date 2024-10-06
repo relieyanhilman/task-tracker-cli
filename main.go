@@ -36,6 +36,17 @@ func main() {
 			fmt.Println("Error updating task:", err)
 		}
 
+	case "delete":
+        if len(os.Args) != 3 {
+            fmt.Println("Usage: task-cli delete <id_task>")
+            return
+        }
+        taskID := os.Args[2]
+        err := DeleteTask(taskID)
+        if err != nil {
+            fmt.Println("Error deleting task:", err)
+        }
+
 	default:
 		fmt.Println("Unknown command:", command)
 	}
