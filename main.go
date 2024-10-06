@@ -37,15 +37,26 @@ func main() {
 		}
 
 	case "delete":
-        if len(os.Args) != 3 {
-            fmt.Println("Usage: task-cli delete <id_task>")
-            return
-        }
-        taskID := os.Args[2]
-        err := DeleteTask(taskID)
-        if err != nil {
-            fmt.Println("Error deleting task:", err)
-        }
+		if len(os.Args) != 3 {
+			fmt.Println("Usage: task-cli delete <id_task>")
+			return
+		}
+		taskID := os.Args[2]
+		err := DeleteTask(taskID)
+		if err != nil {
+			fmt.Println("Error deleting task:", err)
+		}
+
+	case "mark-in-progress":
+		if len(os.Args) != 3 {
+			fmt.Println("Usage: task-cli mark-in-progress <task_id>")
+			return
+		}
+		taskID := os.Args[2]
+		err := MarkTaskInProgress(taskID)
+		if err != nil {
+			fmt.Println("Error marking task as in-progress:", err)
+		}
 
 	default:
 		fmt.Println("Unknown command:", command)
