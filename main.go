@@ -82,6 +82,17 @@ func main() {
 			fmt.Println("Error marking task as in-progress:", err)
 		}
 
+	case "mark-done":
+		if len(os.Args) != 3 {
+			fmt.Println("Usage: task-cli mark-done <task_id>")
+			return
+		}
+		taskID := os.Args[2]
+		err := MarkTask(taskID, "done")
+		if err != nil {
+			fmt.Println("Error marking task as done:", err)
+		}
+
 	default:
 		fmt.Println("Unknown command:", command)
 	}

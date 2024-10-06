@@ -251,3 +251,68 @@ func TestMarkTaskInProgress(t *testing.T) {
 	// Cleanup: Hapus file tasks.json setelah test
 	os.Remove("tasks.json")
 }
+
+func TestMarkTaskDone(t *testing.T) {
+	// Setup: Buat file tasks.json dengan beberapa task dummy untuk testing
+	os.Remove("tasks.json")
+	task1 := Task{
+		ID:          1,
+		Description: "Task 1",
+		Status:      "todo",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	task2 := Task{
+		ID:          2,
+		Description: "Task 2",
+		Status:      "todo",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	SaveTasks([]Task{task1, task2})
+
+	// Case 1: Menandai task dengan ID valid
+	err := MarkTask("1", "done")
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	tasks, err := LoadTasks()
+	if err != nil {
+		t.Fatalf("Failed to load tasks: %v", err)
+	}
+
+	if tasks[0].Status != "done" {
+		t.Errorf("Expected status 'done', got '%s'", tasks[0].Status)
+	}
+
+	if tasks[0].UpdatedAt.Before(tasks[0].CreatedAt) {
+		t.Errorf("UpdatedAt should be later than CreatedAt")
+	}
+
+	// Case 2: Menandai task dengan ID yang tidak ada
+	err = MarkTask("99", "done")
+	if err == nil || err.Error() != "task ID not found" {
+		t.Fatalf("Expected 'task ID not found' error, got %v", err)
+	}
+
+	// Case 3: Menandai task dengan ID tidak valid (0 atau negatif)
+	err = MarkTask("0", "done")
+	if err == nil || err.Error() != "invalid task ID" {
+		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	err = MarkTask("-1", "done")
+	if err == nil || err.Error() != "invalid task ID" {
+		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	// Case 4: Tidak memberikan ID
+	err = MarkTask("", "done")
+	if err == nil || err.Error() != "invalid task ID" {
+		t.Fatalf("Expected 'invalid task ID' error, got %v", err)
+	}
+
+	// Cleanup: Hapus file tasks.json setelah test
+	os.Remove("tasks.json")
+}
