@@ -5,6 +5,30 @@ import (
 	"os"
 )
 
+// main is the entry point of the command-line interface of the task tracker.
+//
+// The supported commands are:
+//
+//   - add: Adds a new task with the given description.
+//
+//     Usage: task-cli add <task-name>
+//
+//   - update: Updates the task with the given ID and description.
+//
+//     Usage: task-cli update <id_task> <description>
+//
+//   - delete: Deletes the task with the given ID.
+//
+//     Usage: task-cli delete <id_task>
+//
+//   - mark-in-progress: Marks the task with the given ID as in-progress.
+//
+//     Usage: task-cli mark-in-progress <task_id>
+//
+// The program prints an error message and returns if any of the commands is
+// called with the wrong number of arguments.
+//
+// The program exits with an error code if any of the commands fails.
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: task-cli [command] [arguments]")
@@ -53,7 +77,7 @@ func main() {
 			return
 		}
 		taskID := os.Args[2]
-		err := MarkTaskInProgress(taskID)
+		err := MarkTask(taskID, "in-progress")
 		if err != nil {
 			fmt.Println("Error marking task as in-progress:", err)
 		}

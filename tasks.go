@@ -131,8 +131,8 @@ func DeleteTask(id string) error {
 	return nil
 }
 
-// Fungsi untuk menandai task sebagai "in-progress" berdasarkan ID
-func MarkTaskInProgress(id string) error {
+// Fungsi untuk menandai task sebagai "in-progress" atau "done" berdasarkan ID
+func MarkTask(id string, newStatus string) error {
 	// Validasi ID task yang diberikan
 	taskID, err := strconv.Atoi(id)
 	if err != nil || taskID <= 0 {
@@ -149,7 +149,7 @@ func MarkTaskInProgress(id string) error {
 	taskFound := false
 	for i, task := range tasks {
 		if task.ID == taskID {
-			tasks[i].Status = "in-progress" // Update status menjadi in-progress
+			tasks[i].Status = newStatus     // Update status menjadi in-progress
 			tasks[i].UpdatedAt = time.Now() // Update waktu
 			taskFound = true
 			break
@@ -165,6 +165,6 @@ func MarkTaskInProgress(id string) error {
 		return err
 	}
 
-	fmt.Printf("Task (ID: %d) marked as in-progress successfully\n", taskID)
+	fmt.Printf("Task (ID: %d) marked as %s successfully\n", taskID, newStatus)
 	return nil
 }
